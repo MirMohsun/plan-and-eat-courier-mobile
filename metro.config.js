@@ -1,3 +1,5 @@
+require('./scripts/load-secrets-env');
+
 const { getDefaultConfig } = require('expo/metro-config');
 const { withUniwindConfig } = require('uniwind/metro');
 

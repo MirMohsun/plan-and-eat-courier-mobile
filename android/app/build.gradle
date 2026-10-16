@@ -92,8 +92,8 @@ android {
         applicationId 'com.planandeat.courier'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5   
-        versionName "1.0.2"
+        versionCode 7   
+        versionName "1.1.4"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -105,7 +105,7 @@ android {
             keyPassword 'android'
         }
         release {
-            def keystorePropertiesFile = rootProject.file('keystore.properties')
+            def keystorePropertiesFile = rootProject.file('../secrets/android/keystore.properties')
             if (keystorePropertiesFile.exists()) {
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -121,9 +121,9 @@ android {
             signingConfig signingConfigs.debug
         }
         release {
-            // Use release keystore when android/keystore.properties exists.
+            // Use release keystore when secrets/android/keystore.properties exists.
             // see https://reactnative.dev/docs/signed-apk-android
-            if (rootProject.file('keystore.properties').exists()) {
+            if (rootProject.file('../secrets/android/keystore.properties').exists()) {
                 signingConfig signingConfigs.release
             } else {
                 signingConfig signingConfigs.debug

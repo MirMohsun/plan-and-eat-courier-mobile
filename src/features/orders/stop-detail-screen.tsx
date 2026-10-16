@@ -4,7 +4,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -44,28 +43,14 @@ export function StopDetailScreen() {
   const { stops: mappedStops } = useCourierStops();
   const completeAssignment = useCompleteAssignment();
   const stops = useStopsWithLocalState(mappedStops);
-  const setPickedUpQuantity = useOrdersStore(s => s.setPickedUpQuantity);
   const markDelivered = useOrdersStore(s => s.markDelivered);
   const stop = stops.find(s => s.id === id);
 
-  const pickedCount = stop?.companies.filter(co => co.pickedUpQuantity > 0).length ?? 0;
   const totalCompanies = stop?.companies.length ?? 0;
-  const isDirectComplete = totalCompanies === 0;
-  const allPickedUp = totalCompanies > 0 && pickedCount === totalCompanies;
-  const progressPercent = totalCompanies > 0 ? (pickedCount / totalCompanies) * 100 : 0;
-  const canComplete = Boolean(stop && !stop.isDelivered && (isDirectComplete || allPickedUp));
+  const canComplete = Boolean(stop && !stop.isDelivered);
 
   const handleMarkDelivered = React.useCallback(async () => {
-    if (!stop) {
-      return;
-    }
-
-    if (!isDirectComplete && !allPickedUp) {
-      Alert.alert(
-        t('courier.stop.pick_quantity_title'),
-        t('courier.stop.pick_quantity_message'),
-        [{ text: t('common.ok') }],
-      );
+    if (!stop || stop.isDelivered) {
       return;
     }
 
@@ -79,7 +64,7 @@ export function StopDetailScreen() {
         console.error('Failed to complete assignment', error);
       }
     }
-  }, [allPickedUp, completeAssignment, isDirectComplete, markDelivered, router, stop, t]);
+  }, [completeAssignment, markDelivered, router, stop]);
 
   const scrollHandler = useAnimatedScrollHandler((e) => {
     scrollY.value = e.contentOffset.y;
@@ -105,6 +90,8 @@ export function StopDetailScreen() {
       </View>
     );
   }
+
+  const instructionText = stop.instruction;
 
   return (
     <View style={[styles.container, { backgroundColor: c.bg }]}>
@@ -145,63 +132,42 @@ export function StopDetailScreen() {
       >
         <View style={styles.heroContainer}>
           <Animated.View style={[StyleSheet.absoluteFillObject, heroStyle]}>
-            <Image
-              source={{ uri: stop.photoUrl }}
-              style={StyleSheet.absoluteFillObject}
-              contentFit="cover"
-              transition={200}
-            />
+            {stop.photoUrl !== ''
+              ? (
+                  <Image
+                    source={{ uri: stop.photoUrl }}
+                    style={StyleSheet.absoluteFillObject}
+                    contentFit="cover"
+                    transition={200}
+                  />
+                )
+              : (
+                  <View style={[StyleSheet.absoluteFillObject, { backgroundColor: isDark ? '#1A1A1A' : '#2A2A2A' }]} />
+                )}
           </Animated.View>
           <View style={styles.heroOverlay} />
           <View style={[styles.heroInfo, { paddingBottom: 24 }]}>
             <Text style={styles.heroName}>{stop.name}</Text>
-            <Text style={styles.heroAddress}>{stop.address}</Text>
+            {stop.address !== '' && (
+              <Text style={styles.heroAddress}>{stop.address}</Text>
+            )}
           </View>
         </View>
 
         <View style={[styles.content, { backgroundColor: c.bg }]}>
-          <Animated.View
-            entering={FadeInDown.delay(40).springify().damping(18)}
-            style={[styles.progressCard, { backgroundColor: c.card, borderColor: c.border }]}
-          >
-            <View style={styles.progressRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.progressTitle, { color: c.textPrimary }]}>
-                  {totalCompanies === 0
-                    ? t('courier.stop.no_companies')
-                    : allPickedUp
-                      ? t('courier.stop.all_picked')
-                      : t('courier.stop.companies_progress', { picked: pickedCount, total: totalCompanies })}
-                </Text>
-                <Text style={[styles.progressSub, { color: c.textSecondary }]}>
-                  {totalCompanies === 0
-                    ? ''
-                    : allPickedUp
-                      ? t('courier.stop.ready_to_deliver')
-                      : t('courier.stop.pick_for_each')}
-                </Text>
-              </View>
-              {totalCompanies > 0 && (
-                <View style={[styles.circleProgress, { borderColor: allPickedUp ? '#22C55E' : '#FF6C00' }]}>
-                  <Text style={[styles.circleText, { color: allPickedUp ? '#22C55E' : '#FF6C00' }]}>
-                    {pickedCount}
-                    /
-                    {totalCompanies}
-                  </Text>
-                </View>
-              )}
-            </View>
-            {totalCompanies > 0 && (
-              <View style={[styles.progTrack, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)' }]}>
-                <View
-                  style={[styles.progFill, {
-                    backgroundColor: allPickedUp ? '#22C55E' : '#FF6C00',
-                    width: `${progressPercent}%`,
-                  }]}
-                />
-              </View>
-            )}
-          </Animated.View>
+          {instructionText != null && (
+            <Animated.View
+              entering={FadeInDown.delay(40).springify().damping(18)}
+              style={[styles.instructionCard, { backgroundColor: c.card, borderColor: c.border }]}
+            >
+              <Text style={[styles.instructionTitle, { color: c.textPrimary }]}>
+                {t('courier.stop.instruction_title')}
+              </Text>
+              <Text style={[styles.instructionBody, { color: c.textSecondary }]}>
+                {instructionText}
+              </Text>
+            </Animated.View>
+          )}
 
           {totalCompanies > 0 && (
             <Animated.View entering={FadeInDown.delay(100).springify().damping(18)}>
@@ -212,7 +178,6 @@ export function StopDetailScreen() {
                 <CompanyPickupCard
                   key={company.id}
                   company={company}
-                  onQuantityChange={qty => setPickedUpQuantity(stop.id, company.id, qty)}
                   index={idx}
                 />
               ))}
@@ -246,7 +211,7 @@ export function StopDetailScreen() {
                 <Text style={[styles.deliverSub, { color: c.textSecondary }]}>
                   {stop.isDelivered
                     ? t('courier.stop.deliver_done_sub')
-                    : stop.address}
+                    : (stop.address || stop.name)}
                 </Text>
               </View>
             </View>
@@ -254,14 +219,14 @@ export function StopDetailScreen() {
             {!stop.isDelivered && (
               <Pressable
                 onPress={handleMarkDelivered}
-                disabled={!canComplete}
+                disabled={!canComplete || completeAssignment.isPending}
                 style={({ pressed }) => [
                   styles.deliverBtn,
                   {
                     backgroundColor: canComplete
                       ? '#22C55E'
                       : (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'),
-                    opacity: pressed ? 0.8 : 1,
+                    opacity: pressed || completeAssignment.isPending ? 0.8 : 1,
                   },
                 ]}
               >
@@ -270,9 +235,7 @@ export function StopDetailScreen() {
                   { color: canComplete ? '#fff' : c.textSecondary },
                 ]}
                 >
-                  {isDirectComplete || canComplete
-                    ? t('courier.stop.confirm_delivery')
-                    : t('courier.stop.specify_quantity_cta')}
+                  {t('courier.stop.confirm_delivery')}
                 </Text>
               </Pressable>
             )}
@@ -361,48 +324,21 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 16,
   },
-  progressCard: {
+  instructionCard: {
     borderRadius: 18,
     borderWidth: 1,
     padding: 16,
     marginBottom: 22,
+    gap: 8,
   },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-    marginBottom: 14,
-  },
-  progressTitle: {
+  instructionTitle: {
     fontSize: 15,
     fontWeight: '700',
     letterSpacing: -0.2,
   },
-  progressSub: {
-    fontSize: 12,
-    marginTop: 3,
-  },
-  circleProgress: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 2.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  circleText: {
-    fontSize: 12,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  progTrack: {
-    height: 5,
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progFill: {
-    height: '100%',
-    borderRadius: 3,
+  instructionBody: {
+    fontSize: 13,
+    lineHeight: 20,
   },
   sectionLabel: {
     fontSize: 11,

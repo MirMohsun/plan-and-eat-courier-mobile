@@ -19,6 +19,7 @@ const envSchema = z.object({
   EXPO_PUBLIC_ASSOCIATED_DOMAIN: z.string().url().optional(),
   EXPO_PUBLIC_VAR_NUMBER: z.number(),
   EXPO_PUBLIC_VAR_BOOL: z.boolean(),
+  EXPO_PUBLIC_IOS_APP_STORE_ID: z.string().optional(),
 
   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS: z.string(),
   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID: z.string(),
@@ -81,6 +82,8 @@ const _env: z.infer<typeof envSchema> = {
   EXPO_PUBLIC_ASSOCIATED_DOMAIN: process.env.EXPO_PUBLIC_ASSOCIATED_DOMAIN,
   EXPO_PUBLIC_VAR_NUMBER: Number(process.env.EXPO_PUBLIC_VAR_NUMBER ?? 0),
   EXPO_PUBLIC_VAR_BOOL: process.env.EXPO_PUBLIC_VAR_BOOL === 'true',
+  EXPO_PUBLIC_IOS_APP_STORE_ID:
+    process.env.EXPO_PUBLIC_IOS_APP_STORE_ID?.trim() || undefined,
   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS:
     process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS ?? '',
   EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_ANDROID:
@@ -99,8 +102,8 @@ function getValidatedEnv(env: z.infer<typeof envSchema>) {
   const errorMessage
     = `❌ Invalid environment variables:${
       JSON.stringify(parsed.error.flatten().fieldErrors, null, 2)
-    }\n❌ Missing variables in .env file for APP_ENV=${EXPO_PUBLIC_APP_ENV}`
-    + `\n💡 Tip: If you recently updated the .env file, try restarting with -c flag to clear the cache.`;
+    }\n❌ Missing variables in secrets/.env for APP_ENV=${EXPO_PUBLIC_APP_ENV}`
+    + `\n💡 Tip: If you recently updated secrets/.env, try restarting with -c flag to clear the cache.`;
 
   if (STRICT_ENV_VALIDATION) {
     console.error(errorMessage);

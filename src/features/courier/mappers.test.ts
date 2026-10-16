@@ -68,15 +68,23 @@ describe('mapAssignmentsToStops', () => {
     expect(stops).toHaveLength(1);
     expect(stops[0]).toMatchObject({
       id: '1',
-      name: 'Pickup Hub',
+      name: 'Pickup Hub - Office A',
       address: '123 Pickup St',
       isDelivered: false,
+      locationName: 'Pickup Hub',
+      companyName: 'Office A',
+      sequence: 1,
+      containerCount: null,
+      instruction: null,
       companies: [
         expect.objectContaining({
           id: '20',
-          name: '456 Company Ave',
+          name: 'Office A',
           address: '456 Company Ave',
           pickedUpQuantity: 0,
+          foodCount: 4,
+          containerCount: null,
+          instruction: null,
           items: [
             { id: '64', name: 'Sobada et', quantity: 1 },
             { id: '65', name: 'Blinchik', quantity: 1 },
@@ -106,6 +114,8 @@ describe('mapAssignmentsToStops', () => {
       address: '123 Pickup St',
       companies: [],
       isDelivered: false,
+      locationName: 'Pickup Hub',
+      sequence: 1,
     });
   });
 
@@ -131,6 +141,7 @@ describe('mapAssignmentsToStops', () => {
       name: 'Маршрут #3',
       address: '',
       companies: [],
+      sequence: 1,
     });
   });
 
@@ -153,7 +164,61 @@ describe('mapAssignmentsToStops', () => {
     expect(stops[0]?.companies[0]?.pickedUpQuantity).toBe(2);
   });
 
-  it('uses company address from order as company name', () => {
+  it('builds Bayil Bay - Sabah Hub title from assignment contract fields', () => {
+    const assignments: CourierAssignmentDto[] = [
+      {
+        id: 5,
+        company_location: 20,
+        pickup_location: null,
+        company_name: 'Sabah Hub',
+        location_name: 'Bayil Bay',
+        container_count: 3,
+        instructions: 'Hand over at lobby desk',
+        sequence: 2,
+        orders: [
+          makeOrder({
+            id: 1,
+            meal: { id: 1, name: 'Combo', image: '' },
+            company_location: {
+              id: 20,
+              address: 'Bayil Bay street',
+              longitude: '40.3',
+              latitude: '49.8',
+              name: 'Bayil Bay',
+              company_name: 'Sabah Hub',
+              instructions: 'Hand over at lobby desk',
+              container_count: 3,
+            },
+          }),
+        ],
+      },
+    ];
+
+    const stops = mapAssignmentsToStops(assignments, []);
+
+    expect(stops[0]).toMatchObject({
+      id: '5',
+      name: 'Bayil Bay - Sabah Hub',
+      locationName: 'Bayil Bay',
+      companyName: 'Sabah Hub',
+      containerCount: 3,
+      instruction: 'Hand over at lobby desk',
+      sequence: 2,
+      companies: [
+        expect.objectContaining({
+          id: '20',
+          name: 'Sabah Hub',
+          address: 'Bayil Bay street',
+          containerCount: 3,
+          instruction: 'Hand over at lobby desk',
+          foodCount: 1,
+          items: [{ id: '1', name: 'Combo', quantity: 1 }],
+        }),
+      ],
+    });
+  });
+
+  it('falls back company name to location name when company_name is missing', () => {
     const assignments: CourierAssignmentDto[] = [
       {
         id: 5,
@@ -174,23 +239,22 @@ describe('mapAssignmentsToStops', () => {
       },
     ];
 
-    const stops = mapAssignmentsToStops(assignments, []);
+    const stops = mapAssignmentsToStops(assignments, [companyLocation]);
 
     expect(stops[0]).toMatchObject({
       id: '5',
-      name: 'Маршрут #5',
+      name: 'Office A',
       companies: [
         expect.objectContaining({
           id: '20',
-          name: 'Bayil Bay',
+          name: 'Office A',
           address: 'Bayil Bay',
-          items: [{ id: '1', name: 'Combo', quantity: 1 }],
         }),
       ],
     });
   });
 
-  it('maps multiple assignments', () => {
+  it('uses list index + 1 when sequence is missing', () => {
     const assignments: CourierAssignmentDto[] = [
       {
         id: 1,
@@ -209,6 +273,8 @@ describe('mapAssignmentsToStops', () => {
     const stops = mapAssignmentsToStops(assignments, [pickupLocation, companyLocation]);
 
     expect(stops).toHaveLength(2);
+    expect(stops[0]?.sequence).toBe(1);
+    expect(stops[1]?.sequence).toBe(2);
     expect(stops[0]?.companies).toHaveLength(1);
     expect(stops[1]?.companies).toHaveLength(0);
   });

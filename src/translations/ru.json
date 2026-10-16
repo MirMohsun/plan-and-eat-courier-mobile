@@ -1,4 +1,14 @@
 {
+  "app_version": {
+    "force_message": "Для продолжения работы нужна новая версия Plan&Eat Courier.",
+    "force_title": "Требуется обновление",
+    "later": "Позже",
+    "maintenance_message": "Приложение временно недоступно. Попробуйте позже.",
+    "maintenance_title": "Временно недоступно",
+    "soft_message": "Доступна новая версия Plan&Eat Courier.",
+    "soft_title": "Доступно обновление",
+    "update": "Обновить"
+  },
   "auth": {
     "forgot": {
       "change_email": "Изменить email",
@@ -104,11 +114,15 @@
   "courier": {
     "card": {
       "companies_progress": "{{picked}}/{{total}} компаний",
+      "container_count": "Количество контейнеров: {{count}}",
       "locked": "Завершите предыдущий маршрут",
-      "progress_done": "Выполнено"
+      "progress_done": "Доставлено",
+      "sequence": "Порядок доставки: №{{number}}"
     },
     "company": {
+      "container_count": "Количество контейнеров: {{count}}",
       "deliver_section": "ДОСТАВИТЬ",
+      "food_count": "Всего блюд: {{count}}",
       "picked_section": "ВЗЯЛ ТОВАРОВ",
       "required_qty": "Нужно: {{count}} шт."
     },
@@ -125,7 +139,7 @@
     "orders": {
       "all_done_subtitle": "Отличная работа сегодня!",
       "all_done_title": "Все доставки выполнены!",
-      "completed": "ВЫПОЛНЕНО",
+      "completed": "ДОСТАВЛЕНО",
       "empty": "На сегодня доставок нет.",
       "load_failed": "Не удалось загрузить точки.",
       "loading": "Загрузка точек...",
@@ -147,13 +161,15 @@
       "check_below": "Отметьте каждого клиента",
       "companies_progress": "{{picked}} из {{total}} компаний",
       "companies_section": "КОМПАНИИ ({{count}})",
-      "complete_label": "Эта точка отмечена как выполненная",
-      "confirm_delivery": "Подтвердить доставку",
-      "deliver_done_sub": "Этот маршрут завершён",
+      "complete_label": "Эта точка отмечена как доставленная",
+      "confirm_delivery": "Доставлено",
+      "deliver_done_sub": "Этот маршрут доставлен",
       "deliver_done_title": "Доставка выполнена!",
       "deliver_title": "Отвезти доставку",
       "delivered_chip": "Доставлено",
-      "mark_delivered": "Отметить доставленным",
+      "instruction_empty": "Нет инструкции для этого адреса.",
+      "instruction_title": "Инструкция по доставке",
+      "mark_delivered": "Доставлено",
       "nav_maps": "Карты",
       "nav_waze": "Waze",
       "no_companies": "Данные о компаниях пока недоступны.",

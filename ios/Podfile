@@ -20,7 +20,14 @@ platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
 
 prepare_react_native_project!
 
+# @generated begin @react-native-firebase/app-disableSPM - expo prebuild (DO NOT MODIFY)
+$RNFirebaseDisableSPM = true
+# @generated end @react-native-firebase/app-disableSPM
+
 target 'PlanEatCourier' do
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseABTesting', :modular_headers => true
+
   use_expo_modules!
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'

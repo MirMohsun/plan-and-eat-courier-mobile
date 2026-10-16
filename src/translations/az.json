@@ -1,4 +1,14 @@
 {
+  "app_version": {
+    "force_message": "Davam etmək üçün Plan&Eat Courier-in yeni versiyası tələb olunur.",
+    "force_title": "Yeniləmə tələb olunur",
+    "later": "Sonra",
+    "maintenance_message": "Tətbiq müvəqqəti olaraq əlçatan deyil. Zəhmət olmasa, sonra yenidən cəhd edin.",
+    "maintenance_title": "Müvəqqəti əlçatmazdır",
+    "soft_message": "Plan&Eat Courier-in daha yeni versiyası mövcuddur.",
+    "soft_title": "Yeniləmə mövcuddur",
+    "update": "Yenilə"
+  },
   "auth": {
     "forgot": {
       "change_email": "Emaili dəyiş",
@@ -104,11 +114,15 @@
   "courier": {
     "card": {
       "companies_progress": "{{picked}}/{{total}} şirkət",
+      "container_count": "Daşınacaq konteyner sayı: {{count}}",
       "locked": "Əvvəlki marşrutu tamamlayın",
-      "progress_done": "Tamamlandı"
+      "progress_done": "Çatdırıldı",
+      "sequence": "Daşınma ardıcıllığı: №{{number}}"
     },
     "company": {
+      "container_count": "Daşınacaq konteyner sayı: {{count}}",
       "deliver_section": "ÇATDIR",
+      "food_count": "Ümumi yemək sayı: {{count}}",
       "picked_section": "GÖTÜRÜLƏN",
       "required_qty": "Lazım: {{count}} əd."
     },
@@ -125,7 +139,7 @@
     "orders": {
       "all_done_subtitle": "Bu gün əla iş!",
       "all_done_title": "Bütün çatdırılmalar tamamlandı!",
-      "completed": "TAMAMLANDI",
+      "completed": "ÇATDIRILDI",
       "empty": "Bu gün üçün çatdırılma yoxdur.",
       "load_failed": "Dayanacaqlar yüklənmədi.",
       "loading": "Dayanacaqlar yüklənir...",
@@ -147,13 +161,15 @@
       "check_below": "Aşağıda hər müştərini işarələyin",
       "companies_progress": "{{total}} şirkətdən {{picked}}",
       "companies_section": "ŞİRKƏTLƏR ({{count}})",
-      "complete_label": "Bu dayanacaq tamamlandı kimi işarələnib",
-      "confirm_delivery": "Çatdırılmanı təsdiqlə",
-      "deliver_done_sub": "Bu marşrut tamamlandı",
+      "complete_label": "Bu dayanacaq çatdırıldı kimi işarələnib",
+      "confirm_delivery": "Çatdırıldı",
+      "deliver_done_sub": "Bu marşrut çatdırıldı",
       "deliver_done_title": "Çatdırılma tamamlandı!",
       "deliver_title": "Bu dayanacağı çatdır",
       "delivered_chip": "Çatdırıldı",
-      "mark_delivered": "Çatdırıldı kimi işarələ",
+      "instruction_empty": "Bu ünvan üçün təlimat yoxdur.",
+      "instruction_title": "Çatdırılma təlimatı",
+      "mark_delivered": "Çatdırıldı",
       "nav_maps": "Xəritələr",
       "nav_waze": "Waze",
       "no_companies": "Şirkət məlumatı hələ mövcud deyil.",

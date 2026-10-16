@@ -5,6 +5,8 @@ import type { AppIconBadgeConfig } from 'app-icon-badge/types';
 
 import 'tsx/cjs';
 
+import './scripts/load-secrets-env.js';
+
 // adding lint exception as we need to import tsx/cjs before env.ts is imported
 // eslint-disable-next-line perfectionist/sort-imports
 import Env from './env';
@@ -38,6 +40,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     supportsTablet: true,
     bundleIdentifier: Env.EXPO_PUBLIC_BUNDLE_ID,
+    googleServicesFile: './GoogleService-Info.plist',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
       NSLocationWhenInUseUsageDescription:
@@ -73,6 +76,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundler: 'metro',
   },
   plugins: [
+    [
+      '@react-native-firebase/app',
+      {
+        ios: {
+          // Keep Firebase on CocoaPods, like the rest of this app's iOS deps.
+          disableSPM: true,
+        },
+      },
+    ],
     [
       'expo-splash-screen',
       {

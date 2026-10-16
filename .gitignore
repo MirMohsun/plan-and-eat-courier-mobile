@@ -99,6 +99,14 @@ web-build/
 .env.test.local
 .env.production.local
 
+# Build secrets (share via encrypted archive; never commit real credentials)
+/secrets/**
+!/secrets/README.md
+!/secrets/android/
+!/secrets/android/.gitkeep
+!/secrets/ios/
+!/secrets/ios/README.md
+
 # TypeScript
 *.tsbuildinfo
 

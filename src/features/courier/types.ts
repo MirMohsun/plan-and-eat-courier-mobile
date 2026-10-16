@@ -18,6 +18,14 @@ export type MealOrderCompanyLocationDto = {
   address: string;
   longitude: string;
   latitude: string;
+  /** Display name for the address / hub, e.g. "Bayil Bay". Optional until backend ships. */
+  name?: string | null;
+  /** Brand / office label, e.g. "Sabah Hub". Optional until backend ships. */
+  company_name?: string | null;
+  /** Delivery instructions for this address. Optional until backend ships. */
+  instructions?: string | null;
+  /** Containers to carry (not meal count). Optional until backend ships. */
+  container_count?: number | null;
 };
 
 export type MealOrderDto = {
@@ -35,6 +43,16 @@ export type CourierAssignmentDto = {
   company_location: number | null;
   pickup_location: number | null;
   orders: MealOrderDto[];
+  /** Brand / office label. Optional until backend ships. */
+  company_name?: string | null;
+  /** Address / hub label. Optional until backend ships. */
+  location_name?: string | null;
+  /** Containers to carry. Optional until backend ships. */
+  container_count?: number | null;
+  /** Delivery instructions. Optional until backend ships. */
+  instructions?: string | null;
+  /** 1-based delivery order for the day. Optional until backend ships. */
+  sequence?: number | null;
 };
 
 export type CourierCompleteOrderDto = {

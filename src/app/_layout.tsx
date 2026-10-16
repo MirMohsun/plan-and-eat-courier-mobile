@@ -16,6 +16,8 @@ import { LoadingHost } from '@/components/ui/loader';
 import { rootToastConfig } from '@/components/ui/toast-config';
 import { TOAST_VISIBILITY_MS } from '@/components/ui/toast-constants';
 import { useThemeConfig } from '@/components/ui/use-theme-config';
+import { AppVersionGate } from '@/features/app-version/app-version-gate';
+import { runAppVersionGate } from '@/features/app-version/run-app-version-gate';
 import { APIProvider } from '@/lib/api';
 import { runAuthBootstrap } from '@/lib/auth/bootstrap-auth';
 import { loadSelectedTheme } from '@/lib/hooks/use-selected-theme';
@@ -39,7 +41,7 @@ SplashScreen.setOptions({
 function AuthBootstrapEffect() {
   React.useEffect(() => {
     void (async () => {
-      await runAuthBootstrap();
+      await Promise.all([runAuthBootstrap(), runAppVersionGate()]);
       await SplashScreen.hideAsync();
     })();
   }, []);
@@ -79,6 +81,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                 {children}
               </View>
               <LoadingHost />
+              <AppVersionGate />
               <GlobalDialogHost />
               <GlobalModalHost />
               <Toast

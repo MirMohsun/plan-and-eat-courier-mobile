@@ -1,4 +1,14 @@
 {
+  "app_version": {
+    "force_message": "A new version of Plan&Eat Courier is required to continue.",
+    "force_title": "Update required",
+    "later": "Later",
+    "maintenance_message": "The app is temporarily unavailable. Please try again later.",
+    "maintenance_title": "Temporarily unavailable",
+    "soft_message": "A newer version of Plan&Eat Courier is available.",
+    "soft_title": "Update available",
+    "update": "Update"
+  },
   "auth": {
     "forgot": {
       "change_email": "Change email",
@@ -104,11 +114,15 @@
   "courier": {
     "card": {
       "companies_progress": "{{picked}}/{{total}} companies",
+      "container_count": "Containers to carry: {{count}}",
       "locked": "Complete the previous route first",
-      "progress_done": "Done"
+      "progress_done": "Delivered",
+      "sequence": "Delivery sequence: №{{number}}"
     },
     "company": {
+      "container_count": "Containers to carry: {{count}}",
       "deliver_section": "DELIVER",
+      "food_count": "Total meals: {{count}}",
       "picked_section": "PICKED UP",
       "required_qty": "Required: {{count}} pcs."
     },
@@ -125,7 +139,7 @@
     "orders": {
       "all_done_subtitle": "Great work today!",
       "all_done_title": "All deliveries done!",
-      "completed": "COMPLETED",
+      "completed": "DELIVERED",
       "empty": "No deliveries assigned for today.",
       "load_failed": "Failed to load stops.",
       "loading": "Loading stops...",
@@ -147,13 +161,15 @@
       "check_below": "Check off each customer below",
       "companies_progress": "{{picked}} of {{total}} companies",
       "companies_section": "COMPANIES ({{count}})",
-      "complete_label": "This stop is marked as complete",
-      "confirm_delivery": "Confirm delivery",
-      "deliver_done_sub": "This route is complete",
+      "complete_label": "This stop is marked as delivered",
+      "confirm_delivery": "Delivered",
+      "deliver_done_sub": "This route is delivered",
       "deliver_done_title": "Delivery complete!",
       "deliver_title": "Deliver this stop",
       "delivered_chip": "Delivered",
-      "mark_delivered": "Mark as delivered",
+      "instruction_empty": "No delivery instructions for this address.",
+      "instruction_title": "Delivery instructions",
+      "mark_delivered": "Delivered",
       "nav_maps": "Maps",
       "nav_waze": "Waze",
       "no_companies": "No company data available yet.",

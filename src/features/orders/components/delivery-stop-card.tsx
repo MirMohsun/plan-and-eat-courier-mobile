@@ -40,90 +40,6 @@ function openGoogleMaps(address: string) {
   Linking.openURL(`https://maps.google.com/?q=${query}`);
 }
 
-function StopCardHeader({
-  totalCompanies,
-  isCompleted,
-  accentColor,
-  isDark,
-  deliveredLabel,
-}: {
-  totalCompanies: number;
-  isCompleted: boolean;
-  accentColor: string;
-  isDark: boolean;
-  deliveredLabel: string;
-}) {
-  return (
-    <View style={styles.headerRow}>
-      <View style={[styles.countPill, { backgroundColor: accentColor }]}>
-        <Text style={styles.countPillText}>
-          🏪
-          {' '}
-          {totalCompanies}
-        </Text>
-      </View>
-      {isCompleted && (
-        <View style={styles.statusChip}>
-          <Text style={styles.statusChipText}>
-            ✓
-            {deliveredLabel}
-          </Text>
-        </View>
-      )}
-      <View style={[
-        styles.checkbox,
-        isCompleted
-          ? styles.checkboxDone
-          : {
-              borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
-              backgroundColor: 'transparent',
-            },
-      ]}
-      >
-        {isCompleted && <Text style={styles.checkmark}>✓</Text>}
-      </View>
-    </View>
-  );
-}
-
-function StopCardProgress({
-  isCompleted,
-  progressPercent,
-  accentColor,
-  textSecondary,
-  isDark,
-  progressDoneLabel,
-  companiesProgressLabel,
-}: {
-  isCompleted: boolean;
-  progressPercent: number;
-  accentColor: string;
-  textSecondary: string;
-  isDark: boolean;
-  progressDoneLabel: string;
-  companiesProgressLabel: string;
-}) {
-  return (
-    <View style={styles.progressRow}>
-      <View style={[
-        styles.progressBg,
-        { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.07)' },
-      ]}
-      >
-        <Animated.View
-          style={[
-            styles.progressFill,
-            { backgroundColor: accentColor, width: `${progressPercent}%` },
-          ]}
-        />
-      </View>
-      <Text style={[styles.progressLabel, { color: textSecondary }]}>
-        {isCompleted ? progressDoneLabel : companiesProgressLabel}
-      </Text>
-    </View>
-  );
-}
-
 function StopCardNavActions({
   address,
   c,
@@ -171,18 +87,17 @@ export function DeliveryStopCard({ stop, isLocked, isCompleted, index, onPress }
   const { t } = useTranslation();
   const scale = useSharedValue(1);
 
-  const pickedCount = stop.companies.filter(co => co.pickedUpQuantity > 0).length;
-  const totalCompanies = stop.companies.length;
-  const progressPercent = totalCompanies > 0 ? (pickedCount / totalCompanies) * 100 : 0;
-  const accentColor = isCompleted ? '#22C55E' : '#FF6C00';
+  const navAddress = stop.address || stop.name;
+  const sequence = stop.sequence > 0 ? stop.sequence : index + 1;
 
   const cardStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
   const handlePressIn = () => {
-    if (!isLocked)
+    if (!isLocked) {
       scale.value = withSpring(0.975);
+    }
   };
   const handlePressOut = () => {
     scale.value = withSpring(1);
@@ -214,14 +129,6 @@ export function DeliveryStopCard({ stop, isLocked, isCompleted, index, onPress }
           ]}
           >
             <View style={styles.content}>
-              <StopCardHeader
-                totalCompanies={totalCompanies}
-                isCompleted={isCompleted}
-                accentColor={accentColor}
-                isDark={isDark}
-                deliveredLabel={t('courier.stop.delivered_chip')}
-              />
-
               {isLocked && (
                 <View style={[
                   styles.lockBanner,
@@ -235,35 +142,29 @@ export function DeliveryStopCard({ stop, isLocked, isCompleted, index, onPress }
                 </View>
               )}
 
-              <Text style={[styles.name, { color: c.textPrimary }]} numberOfLines={1}>
+              <Text style={[styles.name, { color: c.textPrimary }]} numberOfLines={2}>
                 {stop.name}
               </Text>
-              <Text style={[styles.address, { color: c.textSecondary }]} numberOfLines={2}>
-                {stop.address}
-              </Text>
 
-              {!isLocked && (
-                <StopCardProgress
-                  isCompleted={isCompleted}
-                  progressPercent={progressPercent}
-                  accentColor={accentColor}
-                  textSecondary={c.textSecondary}
-                  isDark={isDark}
-                  progressDoneLabel={t('courier.card.progress_done')}
-                  companiesProgressLabel={t('courier.card.companies_progress', {
-                    picked: pickedCount,
-                    total: totalCompanies,
-                  })}
-                />
+              {stop.containerCount != null && (
+                <Text style={[styles.meta, { color: c.textSecondary }]}>
+                  {t('courier.card.container_count', { count: stop.containerCount })}
+                </Text>
               )}
 
-              <StopCardNavActions
-                address={stop.address}
-                c={c}
-                isDark={isDark}
-                wazeLabel={t('courier.stop.nav_waze')}
-                mapsLabel={t('courier.stop.nav_maps')}
-              />
+              <Text style={[styles.meta, { color: c.textSecondary }]}>
+                {t('courier.card.sequence', { number: sequence })}
+              </Text>
+
+              {navAddress !== '' && (
+                <StopCardNavActions
+                  address={navAddress}
+                  c={c}
+                  isDark={isDark}
+                  wazeLabel={t('courier.stop.nav_waze')}
+                  mapsLabel={t('courier.stop.nav_maps')}
+                />
+              )}
             </View>
           </View>
         </View>
@@ -297,34 +198,6 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 8,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 2,
-  },
-  countPill: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  countPillText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  statusChip: {
-    backgroundColor: '#22C55E',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  statusChipText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-  },
   lockBanner: {
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -339,32 +212,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -0.3,
   },
-  address: {
+  meta: {
     fontSize: 13,
-    fontWeight: '400',
-    lineHeight: 18,
-  },
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginTop: 2,
-  },
-  progressBg: {
-    flex: 1,
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 2,
-  },
-  progressLabel: {
-    fontSize: 11,
     fontWeight: '500',
-    minWidth: 88,
-    textAlign: 'right',
+    lineHeight: 18,
   },
   actionsRow: {
     flexDirection: 'row',
@@ -388,23 +239,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#fff',
-  },
-  checkbox: {
-    marginLeft: 'auto',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxDone: {
-    backgroundColor: '#22C55E',
-    borderColor: '#22C55E',
-  },
-  checkmark: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
   },
 });
